@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-from quotes.models import Quotes, Categories, Products
+from quotes.models import Quote, Category, Product
 
 # Custom User Manager
 # class CustomUserManager(BaseUserManager):
@@ -53,16 +53,16 @@ class UserProfile(models.Model):
     notify_begin = models.BooleanField(blank=True, default=False)
     notify_stop = models.BooleanField(blank=True, default=False)
     category = models.OneToOneField(
-        Categories, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="user_profile"
+        Category, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="user_profile"
     )
     favorite_affirmations = models.ForeignKey(
-        Quotes, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="favorited_profiles"
+        Quote, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="favorited_profiles"
     )
     past_affirmations = models.ForeignKey(
-        Quotes, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="past_profiles"
+        Quote, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="past_profiles"
     )
     products = models.ForeignKey(
-        Products, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="user_profiles"
+        Product, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="user_profiles"
     )
 
     def __str__(self):
