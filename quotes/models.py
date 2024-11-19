@@ -7,6 +7,9 @@ class Quote(models.Model):
     number_of_shares = models.IntegerField(default=0)
     quote_text = models.TextField()
 
+    def __str__(self):
+        return self.quote_text
+
 class Product(models.Model):
     favorite_scent = models.CharField(max_length=255, blank=True, null=False, default='')
     product_link = models.URLField(blank=True, null=False)
@@ -27,3 +30,6 @@ class Category(models.Model):
     product = models.ForeignKey('Product', on_delete=models.SET_DEFAULT, related_name="category", blank=True, default=None)
     quotes = models.ForeignKey('Quote', on_delete=models.SET_DEFAULT, related_name="category", blank=True, default=None)
     wants_to_feel = models.CharField(max_length=255, blank=True, null=False, default='')
+
+    def __str__(self):
+        return self.category_name
