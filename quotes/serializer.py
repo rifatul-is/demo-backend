@@ -1,7 +1,20 @@
 from rest_framework import serializers
-from .models import Quote
+from .models import Quote, Product, Category
 
 class QuoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Quote
-        fields = ['author_info', 'author_name', 'number_of_shares', 'quote_text']
+        fields = '__all__'
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Product
+        fields = '__all__'
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Category
+        fields = '__all__'
+
+
