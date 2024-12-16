@@ -59,11 +59,10 @@ def create_user_profile(request):
     if request.method == 'POST':
         # Make a copy of request data and add the user field
         data = request.data.copy()
-        print("data",data)
-        data['user'] = request.user.id 
+        data['user'] = request.user.id  # Auto-assign the user
 
         # Pass the updated data to the serializer
-        serializer = UserProfileSerializer(data=data, context={'request': request})
+        serializer = UserProfileSerializer(data=data, context={"request": request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -74,19 +73,17 @@ def create_user_profile(request):
 @permission_classes([IsAuthenticated])
 def update_user_profile(request):
     try:
-        # Get the current user profile or create it if it doesn't exist
+        # Get the user profile for the currently logged-in user
         user_profile = UserProfile.objects.get(user=request.user)
-
-        # Create a serializer instance with partial=True for patch request
-        serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
-
-        # If the serializer is valid, save the updated instance
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-
-        # If serializer is invalid, return errors
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
     except UserProfile.DoesNotExist:
-        return Response({"error": "User profile does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        return Response({"error": "User profile not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Serialize the data, allowing partial updates (i.e., fields that are provided in the request)
+    serializer = UserProfileSerializer(user_profile, data=request.data, partial=True)
+    
+    if serializer.is_valid():
+        # Save the updated instance and return the response
+        serializer.save()
+        return Response({"message": "Profile updated successfully", "data": serializer.data}, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

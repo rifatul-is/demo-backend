@@ -1,14 +1,26 @@
 from django.db import models
 
 # Create your models here.
+# class Quote(models.Model):
+#     author_info = models.TextField(blank=True, null=True)
+#     author_name = models.CharField(max_length=255)
+#     number_of_shares = models.IntegerField(default=0)
+#     quote_text = models.TextField()
+
+#     def __str__(self):
+#         return self.quote_text
 class Quote(models.Model):
     author_info = models.TextField(blank=True, null=True)
     author_name = models.CharField(max_length=255)
     number_of_shares = models.IntegerField(default=0)
     quote_text = models.TextField()
+    category = models.ForeignKey(
+        'Category', on_delete=models.CASCADE, related_name='quotes', default=None,null=True
+    )
 
     def __str__(self):
         return self.quote_text
+
 
 class Product(models.Model):
     favorite_scent = models.CharField(max_length=255, blank=True, null=False, default='')
@@ -28,7 +40,7 @@ class Category(models.Model):
     category_name = models.CharField(max_length=255)
     is_premium = models.BooleanField(default=False)
     product = models.ForeignKey('Product', on_delete=models.SET_DEFAULT, related_name="category", blank=True, default=None)
-    quotes = models.ForeignKey('Quote', on_delete=models.SET_DEFAULT, related_name="category", blank=True, default=None)
+    #quotes = models.ForeignKey('Quote', on_delete=models.SET_DEFAULT, related_name="category", blank=True, default=None)
     wants_to_feel = models.CharField(max_length=255, blank=True, null=False, default='')
 
     def __str__(self):
