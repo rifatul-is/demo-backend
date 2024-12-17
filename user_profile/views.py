@@ -2,6 +2,8 @@ from django.http import JsonResponse
 from django.contrib.auth import get_user_model
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
+from quotes.serializer import QuoteSerializer
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from user_profile.models import UserProfile
@@ -193,3 +195,57 @@ def remove_affirmation(request):
 
     except UserProfile.DoesNotExist:
         return Response({"detail": "User profile not found."}, status=status.HTTP_404_NOT_FOUND)
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_favorite_affirmations(request):
+    """
+    Get a list of favorite affirmations for the authenticated user, paginated.
+    """
+    # Step 1: Retrieve the user's profile and check if favorite affirmations exist
+    user = request.user
+    user_profile = UserProfile.objects.filter(user=request.user).first()
+    if not user_profile:
+        return Response({"error": "User profile is not defined."}, status=400)
+    if not user_profile.favorite_affirmations.exists():
+        return Response({"error": "No favorite affirmations found."}, status=400)
+
+    # Step 2: Get the favorite affirmations
+    favorite_affirmations = user_profile.favorite_affirmations.all()
+
+    # Step 3: Paginate the favorite affirmations
+    paginator = PageNumberPagination()
+    paginated_favorite_affirmations = paginator.paginate_queryset(favorite_affirmations, request)
+
+    # Step 4: Serialize and return the response
+    serializer = QuoteSerializer(paginated_favorite_affirmations, many=True)
+    return paginator.get_paginated_response(serializer.data)
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_past_affirmations(request):
+    """
+    Get a list of past affirmations for the authenticated user, paginated.
+    """
+    # Step 1: Retrieve the user's profile and check if past affirmations exist
+    user = request.user
+    user_profile = UserProfile.objects.filter(user=request.user).first()
+    if not user_profile:
+        return Response({"error": "User profile is not defined."}, status=400)
+    if not user_profile.past_affirmations.exists():
+        return Response({"error": "No past affirmations found."}, status=400)
+
+    # Step 2: Get the past affirmations
+    past_affirmations = user_profile.past_affirmations.all()
+
+    # Step 3: Paginate the past affirmations
+    paginator = PageNumberPagination()
+    paginated_past_affirmations = paginator.paginate_queryset(past_affirmations, request)
+
+    # Step 4: Serialize and return the response
+    serializer = QuoteSerializer(paginated_past_affirmations, many=True)
+    return paginator.get_paginated_response(serializer.data)
+

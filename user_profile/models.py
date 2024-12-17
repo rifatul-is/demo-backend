@@ -6,6 +6,8 @@ from quotes.models import Quote, Category, Product
 class User(AbstractUser):
     email = models.EmailField(unique=True, max_length=255)
     username = models.CharField(max_length=255,blank=True,null=True)
+    is_verified = models.CharField(max_length=200,null=True,default=True)
+    otp=models.CharField(max_length=200,null=True,blank=True)
 
     # Ensures email is used as the unique identifier for login
     USERNAME_FIELD = 'email'
