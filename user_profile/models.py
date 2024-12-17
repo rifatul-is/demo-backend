@@ -30,14 +30,14 @@ class UserProfile(models.Model):
     notify_per_day = models.IntegerField(default=1)
     notify_begin = models.IntegerField(blank=True, default=10)
     notify_stop = models.IntegerField(blank=True, default=12)
-    category = models.OneToOneField(
+    category = models.ForeignKey(
         Category, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="user_profile"
     )
-    favorite_affirmations = models.ForeignKey(
-        Quote, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="favorited_profiles"
+    favorite_affirmations = models.ManyToManyField(
+        Quote, blank=True, null=True, related_name="favorited_profiles"
     ) 
-    past_affirmations = models.ForeignKey(
-        Quote, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="past_profiles"
+    past_affirmations = models.ManyToManyField(
+        Quote, blank=True, null=True, default=None, related_name="past_profiles"
     )
     products = models.ForeignKey(
         Product, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None, related_name="user_profiles"
